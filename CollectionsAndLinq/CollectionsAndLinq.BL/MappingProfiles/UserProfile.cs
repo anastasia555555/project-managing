@@ -18,14 +18,9 @@ namespace CollectionsAndLinq.BL.MappingProfiles
         {
             CreateMap<User, UserDto>();
 
-            CreateMap<User, UserWithTasksDto>()
-                .ForMember(dest => dest.Tasks, scr => scr.MapFrom(x => new List<TaskDto>()));
+            CreateMap<UserWithTasks, UserWithTasksDto>();
 
-            CreateMap<User, UserInfoDto>()
-                .ForMember(dest => dest.LastProject, scr => scr.MapFrom(x => x))
-                .ForMember(dest => dest.LastProjectTasksCount, scr => scr.MapFrom(x => x))
-                .ForMember(dest => dest.NotFinishedOrCanceledTasksCount, scr => scr.MapFrom(x => x))
-                .ForMember(dest => dest.LongestTask, scr => scr.MapFrom(x => x));
+            CreateMap<UserInfo, UserInfoDto>();
         }
     }
 }

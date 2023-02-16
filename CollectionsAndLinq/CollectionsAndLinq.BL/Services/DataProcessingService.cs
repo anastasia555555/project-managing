@@ -5,6 +5,7 @@ using CollectionsAndLinq.BL.Models.Projects;
 using CollectionsAndLinq.BL.Models.Tasks;
 using CollectionsAndLinq.BL.Models.Teams;
 using CollectionsAndLinq.BL.Models.Users;
+using CollectionsAndLinq.BL.MappingProfiles;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
@@ -12,6 +13,8 @@ using AutoMapper;
 using CollectionsAndLinq.BL.Entities;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Xml.Linq;
+using AutoMapper.Execution;
 
 namespace CollectionsAndLinq.BL.Services;
 
@@ -103,7 +106,6 @@ public class DataProcessingService : IDataProcessingService
         }
 
         return proj;
-
     }
 
 
@@ -116,18 +118,21 @@ public class DataProcessingService : IDataProcessingService
                                team => team.Id,
                                user => user.TeamId,
                                (team, usersInTeam) =>
-                               (team, usersInTeam.OrderByDescending(x => x.RegisteredAt)))
-                               .Where(p => p.Item2.All(u => u.BirthDay.Year < year))
-                               .OrderBy(p => p.team.Name);
-                               //.ThenByDescending(u => u.usersInTeam.OrderByDescending(x => x.RegisteredAt)); //this I don't like
+                               new TeamWithMembers
+                               (
+                                   team.Id,
+                                   team.Name,
+                                   usersInTeam.OrderByDescending(x => x.RegisteredAt).ToList()
+                               ))
+                               .Where(team => team.Members.All(u => u.BirthDay.Year < year))
+                               .OrderBy(team => team.Name);
 
         List<TeamWithMembersDto> result = new();
 
         foreach (var halfresult in halfresults)
         {
-            var team = _mapper.Map<TeamWithMembersDto>(halfresult); //trouble with mapping
-            team.Members.AddRange(_mapper.Map<IEnumerable<UserDto>>(halfresult.Item2));
-
+            var team = _mapper.Map<TeamWithMembersDto>(halfresult); 
+           
             if(team.Members.Count == 0)
             {
                 continue;
@@ -148,15 +153,23 @@ public class DataProcessingService : IDataProcessingService
                               user => user.Id,
                               task => task.PerformerId,
                               (user, tasksOfUser) =>
-                              (user, tasksOfUser.OrderByDescending(x => x.Name.Length)))
-                              .OrderBy(p => p.user.FirstName);
+                              new UserWithTasks
+                              (
+                                  user.Id,
+                                  user.FirstName,
+                                  user.LastName,
+                                  user.Email,
+                                  user.RegisteredAt,
+                                  user.BirthDay,
+                                  tasksOfUser.OrderByDescending(x => x.Name.Length).ToList()
+                              ))
+                              .OrderBy(user => user.FirstName);
 
         List<UserWithTasksDto> result = new();
 
         foreach (var halfresult in halfresults)
         {
-            var user = _mapper.Map<UserWithTasksDto>(halfresult); //trouble with mapping
-            user.Tasks.AddRange(_mapper.Map<IEnumerable<TaskDto>>(halfresult.Item2));
+            var user = _mapper.Map<UserWithTasksDto>(halfresult); 
 
             result.Add(user);
         }
@@ -171,60 +184,223 @@ public class DataProcessingService : IDataProcessingService
         var projects = await _dataProvider.GetProjectsAsync();
         var tasks = await _dataProvider.GetTasksAsync();
 
-        var halfresults = users.Where(user => user.Id == userId) //trouble with query
+        var halfresult = users.Where(user => user.Id == userId) 
                           .GroupJoin(projects,
                               user => user.Id,
                               project => project.AuthorId,
                               (User, project) =>
                               (User, project.OrderByDescending(p => p.CreatedAt).First()))
                            .GroupJoin(tasks,
-                              pair => pair.Item2.Id,
+                              user_proj => user_proj.Item2.Id,
                               task => task.ProjectId,
-                              (pair, tasks) =>
+                              (user_proj, tasks) =>
+                              new UserInfo
                               (
-                                    pair, 
-                                    tasks.Count(), 
-                                    tasks.Where(t => t.State != TaskState.Done), 
-                                    tasks.OrderByDescending(t => (t.FinishedAt ?? DateTime.Now) - t.CreatedAt).First()
-                               ));
+                                    user_proj.User,
+                                    user_proj.Item2,
+                                    tasks.Count(),
+                                    tasks.Where(t => t.State != TaskState.Done).Count(), 
+                                    tasks.OrderByDescending(t => (t.State == TaskState.InProgress ? DateTime.Now : (t.FinishedAt ?? DateTime.MinValue)) - t.CreatedAt).First()
+                               )).Single();
 
-        UserInfoDto user;
-        foreach (var halfresult in halfresults)
+
+        if (halfresult.User != null)
         {
-            if (halfresult.pair.User == null)
-            {
-                return null;
-            }
-
-            user = _mapper.Map<UserInfoDto>(halfresult);
+            UserInfoDto user = _mapper.Map<UserInfoDto>(halfresult);
             return user;
         }
 
         return null;
     }
 
-    public Task<List<ProjectInfoDto>> GetProjectsInfoAsync()
+    public async Task<List<ProjectInfoDto>> GetProjectsInfoAsync()
     {
-                           // .GroupJoin(tasks,
-                           //   pair => pair.Item2.Id,
-                           //   task => task.ProjectId,
-                           //   (pair, tasksInProject) =>
-                           //   (pair, tasksInProject.OrderByDescending(t => t.Description.Length).First()))
-                           //.GroupJoin(tasks,
-                           //   trinity => trinity.pair.Item2.Id,
-                           //   task => task.ProjectId,
-                           //   (trinity, tasksInProject) =>
-                           //   (trinity, tasksInProject.OrderBy(t => t.Name.Length).First()))
-                           //.GroupJoin(tasks,
-                           //   four => four.trinity.pair.user.Id,
-                           //   task => task.PerformerId,
-                           //   (trinity, tasksByUser) =>
-                           //   (trinity, tasksByUser.OrderByDescending(t => (t.FinishedAt ?? DateTime.Now) - t.CreatedAt).First()));
-        throw new NotImplementedException();
+        var projects = await _dataProvider.GetProjectsAsync();
+        var tasks = await _dataProvider.GetTasksAsync();
+        var users = await _dataProvider.GetUsersAsync();
+
+        var halfresults = projects.GroupJoin(tasks,
+                              project => project.Id,
+                              task => task.ProjectId,
+                              (project, tasksInProject) =>
+                              (
+                                project,
+                                !tasksInProject.Any() ? null : tasksInProject.OrderByDescending(t => t.Description).First(), 
+                                !tasksInProject.Any() ? null : tasksInProject.OrderBy(t => t.Name.Length).First(), 
+                                tasksInProject
+                              ))
+                                  .GroupJoin(users,
+                              proj_tasks => proj_tasks.project.TeamId,
+                              user => user.TeamId,
+                              (proj_tasks, usersInTeam) =>
+                              new ProjectInfo
+                              (
+                                    proj_tasks.project,
+                                    proj_tasks.Item2,
+                                    proj_tasks.Item3,
+                                    proj_tasks.project.Description.Length > 20 || proj_tasks.tasksInProject.Count() < 3 ? usersInTeam.Count() : null
+                               ));
+
+        List<ProjectInfoDto> result = new();
+
+        foreach (var halfresult in halfresults)
+        {
+            var projecInfo = _mapper.Map<ProjectInfoDto>(halfresult);
+            result.Add(projecInfo);
+        }
+
+        return result;
     }
 
-    public Task<PagedList<FullProjectDto>> GetSortedFilteredPageOfProjectsAsync(PageModel pageModel, FilterModel filterModel, SortingModel sortingModel)
+    public async Task<PagedList<FullProjectDto>> GetSortedFilteredPageOfProjectsAsync(PageModel pageModel, FilterModel filterModel, SortingModel sortingModel)
     {
-        throw new NotImplementedException();
+        var projects = await _dataProvider.GetProjectsAsync();
+        var tasks = await _dataProvider.GetTasksAsync();
+        var users = await _dataProvider.GetUsersAsync();
+        var teams = await _dataProvider.GetTeamsAsync();
+
+
+        var task_user = tasks.Join(users,
+                        task => task.PerformerId,
+                        user => user.Id,
+                        (task, user) => 
+                        new TaskWithPerfomer
+                        (
+                            task.Id,
+                            task.Name,
+                            task.Description,
+                            task.ProjectId,
+                            task.State,
+                            task.CreatedAt,
+                            task.FinishedAt,
+                            user
+                         ));
+
+        var proj_tasks = projects.GroupJoin(task_user,
+                        project => project.Id,
+                        task => task.ProjectId,
+                        (project, tasksInProject) =>
+                        (project, tasksInProject));
+
+        var proj_user_team = proj_tasks.Join(users,
+                                proj_tasks => proj_tasks.project.AuthorId,
+                                user => user.Id,
+                                (proj_tasks, user) =>
+                                (proj_tasks, user))
+                                .Join(teams,
+                                proj_tasks_user => proj_tasks_user.proj_tasks.project.TeamId,
+                                team => team.Id,
+                                (proj_tasks_user, team) =>
+                                new FullProject
+                                (
+                                    proj_tasks_user.proj_tasks.project.Id,
+                                    proj_tasks_user.proj_tasks.project.Name,
+                                    proj_tasks_user.proj_tasks.project.Description,
+                                    proj_tasks_user.proj_tasks.project.CreatedAt,
+                                    proj_tasks_user.proj_tasks.project.Deadline,
+                                    proj_tasks_user.proj_tasks.tasksInProject.ToList(),
+                                    proj_tasks_user.user,
+                                    team
+                                ));
+
+
+        List<FullProjectDto> Projects = new();
+
+        foreach (var p in proj_user_team)
+        {
+            var project = _mapper.Map<FullProjectDto>(p);
+            Projects.Add(project);
+        }
+
+        if (filterModel is not null) //add regex
+        {
+            if(filterModel.Name is not null)
+            {
+                Projects = Projects.Where(p => p.Name == filterModel.Name).ToList();
+            }
+
+            if (filterModel.Description is not null)
+            {
+                Projects = Projects.Where(p => p.Description == filterModel.Description).ToList();
+            }
+
+            if (filterModel.AutorFirstName is not null)
+            {
+                Projects = Projects.Where(p => p.Author.FirstName == filterModel.AutorFirstName).ToList();
+            }
+
+            if (filterModel.AutorLastName is not null)
+            {
+                Projects = Projects.Where(p => p.Author.LastName == filterModel.AutorLastName).ToList();
+            }
+
+            if (filterModel.TeamName is not null)
+            {
+                Projects = Projects.Where(p => p.Team.Name == filterModel.TeamName).ToList();
+            }
+        }
+
+        if(sortingModel is not null)
+        {
+            switch (sortingModel.Property)
+            {
+                case SortingProperty.Name:
+                    Projects = sortingModel.Order == SortingOrder.Ascending ? 
+                        Projects.OrderBy(p => p.Name).ToList() : Projects.OrderByDescending(p => p.Name).ToList();
+                    break;
+                case SortingProperty.Description:
+                    Projects = sortingModel.Order == SortingOrder.Ascending ?
+                        Projects.OrderBy(p => p.Description).ToList() : Projects.OrderByDescending(p => p.Description).ToList();
+                    break;
+                case SortingProperty.Deadline:
+                    Projects = sortingModel.Order == SortingOrder.Ascending ?
+                        Projects.OrderBy(p => p.Deadline).ToList() : Projects.OrderByDescending(p => p.Deadline).ToList();
+                    break;
+                case SortingProperty.CteatedAt:
+                    Projects = sortingModel.Order == SortingOrder.Ascending ?
+                        Projects.OrderBy(p => p.CreatedAt).ToList() : Projects.OrderByDescending(p => p.CreatedAt).ToList();
+                    break;
+                case SortingProperty.TasksCount:
+                    Projects = sortingModel.Order == SortingOrder.Ascending ?
+                        Projects.OrderBy(p => p.Tasks.Count).ToList() : Projects.OrderByDescending(p => p.Tasks.Count).ToList();
+                    break;
+                case SortingProperty.AutorFirstName:
+                    Projects = sortingModel.Order == SortingOrder.Ascending ?
+                        Projects.OrderBy(p => p.Author.FirstName).ToList() : Projects.OrderByDescending(p => p.Author.FirstName).ToList();
+                    break;
+                case SortingProperty.AutorLastName:
+                    Projects = sortingModel.Order == SortingOrder.Ascending ?
+                        Projects.OrderBy(p => p.Author.LastName).ToList() : Projects.OrderByDescending(p => p.Author.LastName).ToList();
+                    break;
+                case SortingProperty.TeamName:
+                    Projects = sortingModel.Order == SortingOrder.Ascending ?
+                        Projects.OrderBy(p => p.Team.Name).ToList() : Projects.OrderByDescending(p => p.Team.Name).ToList();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if(pageModel is not null)
+        {
+            List<FullProjectDto> proj = new();
+
+            int firstItem = pageModel.PageSize * (pageModel.PageNumber - 1);
+            int lastItem = pageModel.PageSize * pageModel.PageNumber;
+
+            for (int i = firstItem; i <= lastItem; i++) 
+            {
+                if(Projects.Count <= i)
+                {
+                    break;
+                }
+
+                proj.Add(Projects[i]);
+            }
+
+            return new PagedList<FullProjectDto>(proj, Projects.Count);
+        }
+
+        return new PagedList<FullProjectDto>(Projects, Projects.Count); 
     }
 }

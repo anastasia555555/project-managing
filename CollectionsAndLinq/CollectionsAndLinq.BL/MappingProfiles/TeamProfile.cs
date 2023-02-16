@@ -15,8 +15,7 @@ namespace CollectionsAndLinq.BL.MappingProfiles
         public TeamProfile()
         {
             CreateMap<Team, TeamDto>();
-            CreateMap<Team, TeamWithMembersDto>()
-                .ForMember(dest => dest.Members, scr => scr.MapFrom(x => new List<UserDto>()));
+            CreateMap<TeamWithMembers, TeamWithMembersDto>();
         }
     }
 }

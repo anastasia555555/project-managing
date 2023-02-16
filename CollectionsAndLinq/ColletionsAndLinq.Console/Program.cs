@@ -1,7 +1,8 @@
 ﻿using CollectionsAndLinq.BL.Services;
 using CollectionsAndLinq.BL.MappingProfiles;
 using AutoMapper;
-using System.Net.Http.Json;
+using CollectionsAndLinq.BL.Models.Projects;
+using ColletionsAndLinq.Console.Display;
 
 namespace ColletionsAndLinq.Console
 {
@@ -9,24 +10,35 @@ namespace ColletionsAndLinq.Console
     {
         static void Main(string[] args)
         {
+            var mapper = AddMapper();
 
+            var service = AddServices(mapper);
+
+            var result = service.GetSortedFilteredPageOfProjectsAsync(new(5, 10), null, new(SortingProperty.Name, SortingOrder.Descending)).Result;
+
+            Display.Display dis = new(result);
+        }
+
+        public static Mapper AddMapper()
+        {
             MapperConfiguration mappercfg =
-            new (cfg =>
+            new(cfg =>
             {
                 cfg.AddProfile<UserProfile>();
                 cfg.AddProfile<TeamProfile>();
                 cfg.AddProfile<TaskProfile>();
+                cfg.AddProfile<ProjectProfile>();
             });
 
-            IMapper mapper = new Mapper(mappercfg);
+            return new Mapper(mappercfg);
+        }
 
+        public static DataProcessingService AddServices(IMapper mapper)
+        {
             HttpClient client = new();
             DataProvider dataProvider = new(client);
-            DataProcessingService ser = new(dataProvider, mapper);
-
-            var result = ser.GetUserInfoAsync(2).Result;
-
-            System.Console.WriteLine($"{result.User.LastName} : {result.LastProject}");
+            
+            return new(dataProvider, mapper);
         }
     }
 }
