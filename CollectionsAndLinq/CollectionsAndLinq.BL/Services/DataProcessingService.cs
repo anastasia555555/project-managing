@@ -1,4 +1,5 @@
 ﻿using AutoMapper.Features;
+using System.Text.RegularExpressions;
 using CollectionsAndLinq.BL.Interfaces;
 using CollectionsAndLinq.BL.Models;
 using CollectionsAndLinq.BL.Models.Projects;
@@ -65,7 +66,7 @@ public class DataProcessingService : IDataProcessingService
     {
         var tasks = await _dataProvider.GetTasksAsync();
 
-        var result = tasks.Where(task => task.PerformerId == userId).ToList();
+        var result = tasks.Where(task => task.PerformerId == userId).OrderBy(task => task.Name).ToList();
 
         List<TaskDto> tasksByUser = new();
 
@@ -89,9 +90,9 @@ public class DataProcessingService : IDataProcessingService
                                 (team, usersInTeam) =>
                                 (
                                     team.Id, 
-                                    usersInTeam.Where(u => u.TeamId == team.Id).Count()
+                                    usersInTeam.Count(u => u.TeamId == team.Id)
                                 ))
-                                .Where((t, u) => u > teamSize)
+                                .Where((t, u) => t.Item2 > teamSize)
                                 .Join(projects,
                                 team => team.Id,
                                 project => project.TeamId,
@@ -107,7 +108,6 @@ public class DataProcessingService : IDataProcessingService
 
         return proj;
     }
-
 
     public async Task<List<TeamWithMembersDto>> GetSortedTeamByMembersWithYearAsync(int year)
     {
@@ -184,14 +184,19 @@ public class DataProcessingService : IDataProcessingService
         var projects = await _dataProvider.GetProjectsAsync();
         var tasks = await _dataProvider.GetTasksAsync();
 
+        if(!users.Any(user => user.Id == userId))
+        {
+            return null;
+        }
+
         var halfresult = users.Where(user => user.Id == userId) 
                           .GroupJoin(projects,
                               user => user.Id,
                               project => project.AuthorId,
                               (User, project) =>
-                              (User, project.OrderByDescending(p => p.CreatedAt).First()))
+                              (User, project.MaxBy(p => p.CreatedAt)))
                            .GroupJoin(tasks,
-                              user_proj => user_proj.Item2.Id,
+                              user_proj => user_proj.Item2 is null ? -1 : user_proj.Item2.Id,
                               task => task.ProjectId,
                               (user_proj, tasks) =>
                               new UserInfo
@@ -200,17 +205,12 @@ public class DataProcessingService : IDataProcessingService
                                     user_proj.Item2,
                                     tasks.Count(),
                                     tasks.Where(t => t.State != TaskState.Done).Count(), 
-                                    tasks.OrderByDescending(t => (t.State == TaskState.InProgress ? DateTime.Now : (t.FinishedAt ?? DateTime.MinValue)) - t.CreatedAt).First()
+                                    tasks.MaxBy(t => (t.State == TaskState.InProgress ? DateTime.Now : (t.FinishedAt ?? DateTime.MinValue)) - t.CreatedAt)
                                )).Single();
 
 
-        if (halfresult.User != null)
-        {
-            UserInfoDto user = _mapper.Map<UserInfoDto>(halfresult);
-            return user;
-        }
-
-        return null;
+        return _mapper.Map<UserInfoDto>(halfresult);
+        
     }
 
     public async Task<List<ProjectInfoDto>> GetProjectsInfoAsync()
@@ -225,8 +225,8 @@ public class DataProcessingService : IDataProcessingService
                               (project, tasksInProject) =>
                               (
                                 project,
-                                !tasksInProject.Any() ? null : tasksInProject.OrderByDescending(t => t.Description).First(), 
-                                !tasksInProject.Any() ? null : tasksInProject.OrderBy(t => t.Name.Length).First(), 
+                                tasksInProject.MaxBy(t => t.Description),
+                                tasksInProject.MaxBy(t => t.Name.Length), 
                                 tasksInProject
                               ))
                                   .GroupJoin(users,
@@ -312,31 +312,31 @@ public class DataProcessingService : IDataProcessingService
             Projects.Add(project);
         }
 
-        if (filterModel is not null) //add regex
+        if (filterModel is not null)
         {
             if(filterModel.Name is not null)
             {
-                Projects = Projects.Where(p => p.Name == filterModel.Name).ToList();
+                Projects = Projects.Where(p => p.Name.Contains(filterModel.Name)).ToList();
             }
 
             if (filterModel.Description is not null)
             {
-                Projects = Projects.Where(p => p.Description == filterModel.Description).ToList();
+                Projects = Projects.Where(p => p.Description.Contains(filterModel.Description)).ToList();
             }
 
             if (filterModel.AutorFirstName is not null)
             {
-                Projects = Projects.Where(p => p.Author.FirstName == filterModel.AutorFirstName).ToList();
+                Projects = Projects.Where(p => p.Author.FirstName.Contains(filterModel.AutorFirstName)).ToList();
             }
 
             if (filterModel.AutorLastName is not null)
             {
-                Projects = Projects.Where(p => p.Author.LastName == filterModel.AutorLastName).ToList();
+                Projects = Projects.Where(p => p.Author.LastName.Contains(filterModel.AutorLastName)).ToList();
             }
 
             if (filterModel.TeamName is not null)
             {
-                Projects = Projects.Where(p => p.Team.Name == filterModel.TeamName).ToList();
+                Projects = Projects.Where(p => p.Team.Name.Contains(filterModel.TeamName)).ToList();
             }
         }
 

@@ -14,9 +14,9 @@ namespace ColletionsAndLinq.Console
 
             var service = AddServices(mapper);
 
-            var result = service.GetSortedFilteredPageOfProjectsAsync(new(5, 10), null, new(SortingProperty.Name, SortingOrder.Descending)).Result;
+            Menu menu = new(service, "МОЯ ХАТИНА");
 
-            Display.Display dis = new(result);
+            menu.Start();
         }
 
         public static Mapper AddMapper()
