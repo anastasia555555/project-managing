@@ -2,8 +2,8 @@
 {
     public record ProjectInfo(
     Project Project,
-    Task LongestTaskByDescription,
-    Task ShortestTaskByName,
+    Task.Task LongestTaskByDescription,
+    Task.Task ShortestTaskByName,
     int? TeamMembersCount = null)
     {
 

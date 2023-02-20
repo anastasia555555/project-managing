@@ -2,10 +2,10 @@
 {
     public record UserInfo(
     User User,
-    Project LastProject,
+    Project.Project LastProject,
     int LastProjectTasksCount,
     int NotFinishedOrCanceledTasksCount,
-    Task LongestTask)
+    Task.Task LongestTask)
     {
 
     }

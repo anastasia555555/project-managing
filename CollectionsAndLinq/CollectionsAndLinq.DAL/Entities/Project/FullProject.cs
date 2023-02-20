@@ -1,4 +1,7 @@
-﻿namespace CollectionsAndLinq.DAL.Entities.Project
+﻿using CollectionsAndLinq.DAL.Entities.Task;
+
+
+namespace CollectionsAndLinq.DAL.Entities.Project
 {
     public record FullProject(
     int Id,
@@ -7,8 +10,8 @@
     DateTime CreatedAt,
     DateTime Deadline,
     List<TaskWithPerfomer> Tasks,
-    User Author,
-    Team Team)
+    User.User Author,
+    Team.Team Team)
     {
 
     }

@@ -7,7 +7,7 @@
     string Email,
     DateTime RegisteredAt,
     DateTime BirthDay,
-    List<Task> Tasks)
+    List<Task.Task> Tasks)
     {
 
     }

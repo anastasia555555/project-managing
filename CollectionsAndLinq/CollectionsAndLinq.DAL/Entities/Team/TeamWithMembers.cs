@@ -3,7 +3,7 @@
     public record TeamWithMembers(
     int Id,
     string Name,
-    List<User> Members)
+    List<User.User> Members)
     {
     }
 }

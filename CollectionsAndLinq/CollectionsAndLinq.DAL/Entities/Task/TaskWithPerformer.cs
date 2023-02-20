@@ -8,7 +8,7 @@
     TaskState State,
     DateTime CreatedAt,
     DateTime? FinishedAt,
-    User Perfomer)
+    User.User Perfomer)
     {
 
     }
