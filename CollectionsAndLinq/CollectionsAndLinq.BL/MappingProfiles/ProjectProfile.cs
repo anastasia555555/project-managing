@@ -16,6 +16,7 @@ namespace CollectionsAndLinq.BL.MappingProfiles
             CreateMap<Project, ProjectDto>();
             CreateMap<ProjectInfo, ProjectInfoDto>();
             CreateMap<FullProject, FullProjectDto>();
+            CreateMap<NewProjectDto, Project>();
         }
     }
 }
