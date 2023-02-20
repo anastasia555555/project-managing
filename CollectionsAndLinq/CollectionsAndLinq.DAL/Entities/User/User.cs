@@ -1,6 +1,6 @@
-﻿namespace CollectionsAndLinq.BL.Entities;
-
-public record User(
+﻿namespace CollectionsAndLinq.DAL.Entities.User
+{
+    public record User(
     int Id,
     int? TeamId,
     string FirstName,
@@ -8,6 +8,9 @@ public record User(
     string Email,
     DateTime RegisteredAt,
     DateTime BirthDay)
-{
+    {
 
+    }
 }
+
+

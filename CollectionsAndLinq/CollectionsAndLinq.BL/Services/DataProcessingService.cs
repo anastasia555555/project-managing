@@ -41,19 +41,19 @@ public class DataProcessingService : IDataProcessingService
         return _mapper.Map<List<ProjectDto>>(await _dataProvider.GetProjectsAsync());
     }
 
-    public async Task<List<ProjectDto>> GetTaskssAsync()
+    public async Task<List<TaskDto>> GetTasksAsync()
     {
-        return _mapper.Map<List<ProjectDto>>(await _dataProvider.GetTasksAsync());
+        return _mapper.Map<List<TaskDto>>(await _dataProvider.GetTasksAsync());
     }
 
-    public async Task<List<ProjectDto>> GetTeamsAsync()
+    public async Task<List<TeamDto>> GetTeamsAsync()
     {
-        return _mapper.Map<List<ProjectDto>>(await _dataProvider.GetTeamsAsync());
+        return _mapper.Map<List<TeamDto>>(await _dataProvider.GetTeamsAsync());
     }
 
-    public async Task<List<ProjectDto>> GetUsersAsync()
+    public async Task<List<UserDto>> GetUsersAsync()
     {
-        return _mapper.Map<List<ProjectDto>>(await _dataProvider.GetUsersAsync());
+        return _mapper.Map<List<UserDto>>(await _dataProvider.GetUsersAsync());
     }
 
     public async Task<Dictionary<string, int>> GetTasksCountInProjectsByUserIdAsync(int userId)

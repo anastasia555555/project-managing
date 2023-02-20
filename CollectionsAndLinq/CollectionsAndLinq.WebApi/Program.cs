@@ -1,3 +1,17 @@
+using CollectionsAndLinq.BL.Services;
+using System.Reflection;
+using AutoMapper;
+using CollectionsAndLinq.BL.MappingProfiles;
+using CollectionsAndLinq.BL.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using AutoMapper.Configuration;
+using Microsoft.Extensions.Options;
+using CollectionsAndLinq.WebApi.Extentions;
+
 namespace CollectionsAndLinq.WebApi
 {
     public class Program
@@ -6,10 +20,11 @@ namespace CollectionsAndLinq.WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            builder.Services.RegisterAutoMapper();
+            builder.Services.RegisterCustomServices();
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -26,10 +41,10 @@ namespace CollectionsAndLinq.WebApi
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             app.Run();
         }
+
     }
 }

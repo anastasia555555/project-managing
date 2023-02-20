@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CollectionsAndLinq.WebApi.Controllers
 {
-    [Route("api/[contrpller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class TeamsController : Controller
     {
@@ -21,10 +21,10 @@ namespace CollectionsAndLinq.WebApi.Controllers
         [HttpGet]
         public ActionResult<List<TeamDto>> GetTeams()
         {
-            return View();
+            return _service.GetTeamsAsync().Result;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult<TeamDto> GetTeam(int id)
         {
             return View();
@@ -42,10 +42,16 @@ namespace CollectionsAndLinq.WebApi.Controllers
             return View();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public ActionResult<TeamDto> DeleteTeam(int id)
         {
             return View();
+        }
+
+        [HttpGet("/sortedByYaer/{year}")]
+        public ActionResult<List<TeamWithMembersDto>> GetSortedTeamByMembersWithYear(int year)
+        {
+            return _service.GetSortedTeamByMembersWithYearAsync(year).Result;
         }
     }
 }

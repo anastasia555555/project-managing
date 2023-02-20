@@ -20,10 +20,10 @@ namespace CollectionsAndLinq.WebApi.Controllers
         [HttpGet]
         public ActionResult<List<TaskDto>> GetTasks()
         {
-            return View();
+            return _service.GetTasksAsync().Result;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult<TaskDto> GetTask(int id)
         {
             return View();
@@ -41,10 +41,22 @@ namespace CollectionsAndLinq.WebApi.Controllers
             return View();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public ActionResult<TaskDto> DeleteTask(int id)
         {
             return View();
+        }
+
+        [HttpGet("/countInProjectsByUser/{userId}")]
+        public ActionResult<Dictionary<string, int>> GetTasksCountInProjectsByUserId(int userId)
+        {
+            return _service.GetTasksCountInProjectsByUserIdAsync(userId).Result;
+        }
+
+        [HttpGet("/byUser/{userId}")]
+        public ActionResult<List<TaskDto>> GetCapitalTasksByUserId(int userId)
+        {
+            return _service.GetCapitalTasksByUserIdAsync(userId).Result;
         }
     }
 }

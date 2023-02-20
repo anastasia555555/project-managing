@@ -21,10 +21,10 @@ namespace CollectionsAndLinq.WebApi.Controllers
         [HttpGet]
         public ActionResult<List<UserDto>> GetUsers()
         {
-            return View();
+            return _service.GetUsersAsync().Result;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult<TeamDto> GetUser(int id)
         {
             return View();
@@ -42,10 +42,22 @@ namespace CollectionsAndLinq.WebApi.Controllers
             return View();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public ActionResult<UserDto> DeleteUser(int id)
         {
             return View();
+        }
+
+        [HttpGet("/sorted")]
+        public ActionResult<List<UserWithTasksDto>> GetSortedUsersWithSortedTasks()
+        {
+            return _service.GetSortedUsersWithSortedTasksAsync().Result;
+        }
+
+        [HttpGet("/info/{userId}")]
+        public ActionResult<UserInfoDto> GetUserInfo(int userId)
+        {
+            return _service.GetUserInfoAsync(userId).Result;
         }
     }
 }

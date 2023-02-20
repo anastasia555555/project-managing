@@ -1,5 +1,4 @@
-﻿
-namespace CollectionsAndLinq.BL.Entities
+﻿namespace CollectionsAndLinq.DAL.Entities.Team
 {
     public record TeamWithMembers(
     int Id,

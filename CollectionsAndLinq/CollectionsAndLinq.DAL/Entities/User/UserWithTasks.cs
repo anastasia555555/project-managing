@@ -1,7 +1,4 @@
-﻿using CollectionsAndLinq.BL.Entities;
-using CollectionsAndLinq.BL.Models.Tasks;
-
-namespace CollectionsAndLinq.BL.Entities
+﻿namespace CollectionsAndLinq.DAL.Entities.User
 {
     public record UserWithTasks(
     int Id,
@@ -14,5 +11,4 @@ namespace CollectionsAndLinq.BL.Entities
     {
 
     }
-
 }

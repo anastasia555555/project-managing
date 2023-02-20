@@ -1,6 +1,6 @@
-﻿namespace CollectionsAndLinq.BL.Entities;
-
-public record Task(
+﻿namespace CollectionsAndLinq.DAL.Entities.Task
+{
+    public record Task(
     int Id,
     int ProjectId,
     int PerformerId,
@@ -9,6 +9,8 @@ public record Task(
     TaskState State,
     DateTime CreatedAt,
     DateTime? FinishedAt)
-{
+    {
 
+    }
 }
+

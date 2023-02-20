@@ -1,11 +1,4 @@
-﻿using CollectionsAndLinq.BL.Models.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CollectionsAndLinq.BL.Entities
+﻿namespace CollectionsAndLinq.DAL.Entities.Task
 {
     public record TaskWithPerfomer(
     int Id,

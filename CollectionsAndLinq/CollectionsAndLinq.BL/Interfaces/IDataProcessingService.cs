@@ -8,6 +8,10 @@ namespace CollectionsAndLinq.BL.Interfaces;
 
 public interface IDataProcessingService
 {
+    Task<List<ProjectDto>> GetProjectsAsync();
+    Task<List<TaskDto>> GetTasksAsync();
+    Task<List<TeamDto>> GetTeamsAsync();
+    Task<List<UserDto>> GetUsersAsync();
     Task<Dictionary<string, int>> GetTasksCountInProjectsByUserIdAsync(int userId);
     Task<List<TaskDto>> GetCapitalTasksByUserIdAsync(int userId);
     Task<List<(int Id, string Name)>> GetProjectsByTeamSizeAsync(int teamSize);

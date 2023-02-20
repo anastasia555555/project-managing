@@ -1,5 +1,5 @@
-﻿using CollectionsAndLinq.BL.Entities;
-using Task = CollectionsAndLinq.BL.Entities.Task;
+﻿using CollectionsAndLinq.DAL.Entities;
+using Task = CollectionsAndLinq.DAl.Entities.Task;
 
 namespace CollectionsAndLinq.BL.Interfaces;
 
