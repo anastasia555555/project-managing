@@ -123,23 +123,74 @@ namespace CollectionsAndLinq.BL.Services
             var users = await _context.Users.ToListAsync();
             var teams = await _context.Teams.ToListAsync();
 
-            Func<FullProject, bool> filtering = (_) => true;
+            Func<FullProject, bool> filtering = (x) => true;
 
             if (filterModel != null)
             {
-                 filtering = (_) =>
-                _.Name.Contains(filterModel.Name ?? string.Empty) &&
-                _.Description.Contains(filterModel.Description ?? string.Empty) &&
-                _.Author.FirstName.Contains(filterModel.AutorFirstName ?? string.Empty) &&
-                _.Author.LastName.Contains(filterModel.AutorLastName ?? string.Empty) &&
-                _.Team.Name.Contains(filterModel.TeamName ?? string.Empty);
+                 filtering = (x) =>
+                x.Name.Contains(filterModel.Name ?? string.Empty) &&
+                x.Description.Contains(filterModel.Description ?? string.Empty) &&
+                x.Author.FirstName.Contains(filterModel.AutorFirstName ?? string.Empty) &&
+                x.Author.LastName.Contains(filterModel.AutorLastName ?? string.Empty) &&
+                x.Team.Name.Contains(filterModel.TeamName ?? string.Empty);
             }
             
-            Func<FullProject, bool> sorting = (_) => true;
+            Func<FullProject, object> sortingAscending = (x) => false;
+            Func<FullProject, object> sortingDescending = (x) => false;
 
-            if(sortingModel != null)
+            if (sortingModel != null)
             {
-                sorting = (_) => false; //finish tomorrow
+                Func<FullProject, object> sorting = (x) => true;
+
+                switch (sortingModel.Property)
+                {
+                    case SortingProperty.Name:
+                        sorting = (x) => x.Name;
+                        break;
+                    case SortingProperty.Description:
+                        sorting = (x) => x.Description;
+                        break;
+                    case SortingProperty.Deadline:
+                        sorting = (x) => x.Deadline;
+                        break;
+                    case SortingProperty.CteatedAt:
+                        sorting = (x) => x.CreatedAt;
+                        break;
+                    case SortingProperty.TasksCount:
+                        sorting = (x) => x.Tasks.Count;
+                        break;
+                    case SortingProperty.AutorFirstName:
+                        sorting = (x) => x.Author.FirstName;
+                        break;
+                    case SortingProperty.AutorLastName:
+                        sorting = (x) => x.Author.LastName;
+                        break;
+                    case SortingProperty.TeamName:
+                        sorting = (x) => x.Team.Name;
+                        break;
+                    default:
+                        break;
+                }
+
+                switch (sortingModel.Order)
+                {
+                    case SortingOrder.Ascending:
+                        sortingAscending = sorting;
+                        break;
+                    case SortingOrder.Descending:
+                        sortingDescending = sorting;
+                        break;
+                    default:
+                        break;
+                }
+                
+            }
+
+            int skipPages = 0;
+
+            if(pageModel != null)
+            {
+                skipPages = pageModel.PageSize * (pageModel.PageNumber - 1);
             }
 
             var result = projects
@@ -178,7 +229,11 @@ namespace CollectionsAndLinq.BL.Services
                     proj.user,
                     team))
                 .Where(filtering)
-                .ToList(); 
+                .OrderBy(sortingAscending)
+                .OrderByDescending(sortingDescending)
+                .Skip(skipPages)
+                .Take(pageModel.PageSize)
+                .ToList();
 
             /*var task_user = tasks
                 .Join(users,
@@ -256,7 +311,7 @@ namespace CollectionsAndLinq.BL.Services
                 {
                     Projects = Projects.Where(p => p.Team.Name.Contains(filterModel.TeamName)).ToList();
                 }
-            }*/
+            }
 
             if (sortingModel is not null)
             {
@@ -317,9 +372,9 @@ namespace CollectionsAndLinq.BL.Services
                 }
 
                 return new PagedList<FullProjectDto>(proj, Projects.Count);
-            }
+            }*/
 
-            return new PagedList<FullProjectDto>(Projects, Projects.Count);
+            return new PagedList<FullProjectDto>(_mapper.Map<List<FullProjectDto>>(result), result.Count);
         }
     }
 }
