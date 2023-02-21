@@ -7,7 +7,7 @@ namespace CollectionsAndLinq.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectsController : Controller
+    public class ProjectsController : ControllerBase
     {
         private readonly IProjectService _service;
 

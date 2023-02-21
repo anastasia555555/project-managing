@@ -8,55 +8,52 @@ namespace CollectionsAndLinq.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TasksController : Controller
+    public class TasksController : ControllerBase
     {
-        private readonly IDataProcessingService _service;
+        private readonly ITaskService _service;
 
-        public TasksController(IDataProcessingService service)
-        {
-            _service = service;
-        }
+        public TasksController(ITaskService service) => _service = service;
 
         [HttpGet]
-        public ActionResult<List<TaskDto>> GetTasks()
+        public async Task<List<TaskDto>> GetTasks()
         {
-            return _service.GetTasksAsync().Result;
+            return await _service.GetTasksAsync();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<TaskDto> GetTask(int id)
+        public async Task<TaskDto> GetTaskAsync(int id)
         {
-            return View();
+            return await _service.GetTaskAsync(id);
         }
 
         [HttpPost]
-        public ActionResult<BL.Entities.Task> AddTask([FromBody] BL.Entities.Task task)
+        public async Task<TaskDto> AddTask([FromBody] NewTaskDto task)
         {
-            return View();
+            return await _service.CreateTask(task);
         }
 
         [HttpPut]
-        public ActionResult<BL.Entities.Task> EditTask([FromBody] BL.Entities.Task task)
+        public async Task<TaskDto> EditTask([FromBody] NewTaskDto task)
         {
-            return View();
+            return await _service.UpdateTask(task);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<TaskDto> DeleteTask(int id)
+        public async Task<TaskDto> DeleteTask(int id)
         {
-            return View();
+            return await _service.DeleteTask(id);
         }
 
         [HttpGet("/countInProjectsByUser/{userId}")]
-        public ActionResult<Dictionary<string, int>> GetTasksCountInProjectsByUserId(int userId)
+        public async Task<Dictionary<string, int>> GetTasksCountInProjectsByUserId(int userId)
         {
-            return _service.GetTasksCountInProjectsByUserIdAsync(userId).Result;
+            return await _service.GetTasksCountInProjectsByUserIdAsync(userId);
         }
 
         [HttpGet("/byUser/{userId}")]
-        public ActionResult<List<TaskDto>> GetCapitalTasksByUserId(int userId)
+        public async Task<List<TaskDto>> GetCapitalTasksByUserId(int userId)
         {
-            return _service.GetCapitalTasksByUserIdAsync(userId).Result;
+            return await _service.GetCapitalTasksByUserIdAsync(userId);
         }
     }
 }
