@@ -19,6 +19,11 @@ namespace CollectionsAndLinq.BL.Services
             return await _context.Projects.Select(x => _mapper.Map<ProjectDto>(x)).ToListAsync();
         }
 
+        public async Task<ProjectDto> GetProjectAsync(int id)
+        {
+            return await _context.Projects.Where(x => x.Id == id).Select(x => _mapper.Map<ProjectDto>(x)).FirstAsync();
+        }
+
         public async Task<ProjectDto> CreateProject(NewProjectDto project)
         {
             var projectEntity = _mapper.Map<Project>(project);

@@ -6,6 +6,7 @@ namespace CollectionsAndLinq.BL.Interfaces
     public interface IProjectService
     {
         Task<List<ProjectDto>> GetProjectsAsync();
+        Task<ProjectDto> GetProjectAsync(int id);
         Task<ProjectDto> CreateProject(NewProjectDto project);
         Task<ProjectDto> UpdateProject(NewProjectDto project);
         Task<ProjectDto> DeleteProject(int id);

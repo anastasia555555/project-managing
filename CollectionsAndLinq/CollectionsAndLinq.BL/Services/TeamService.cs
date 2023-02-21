@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CollectionsAndLinq.BL.Interfaces;
+using CollectionsAndLinq.BL.Models.Projects;
 using CollectionsAndLinq.BL.Models.Teams;
 using CollectionsAndLinq.BL.Services.Abstract;
 using CollectionsAndLinq.DAL.Context;
@@ -15,6 +16,11 @@ namespace CollectionsAndLinq.BL.Services
         public async Task<List<TeamDto>> GetTeamsAsync()
         {
             return await _context.Teams.Select(x => _mapper.Map<TeamDto>(x)).ToListAsync();
+        }
+
+        public async Task<TeamDto> GetTeamAsync(int id)
+        {
+            return await _context.Teams.Where(x => x.Id == id).Select(x => _mapper.Map<TeamDto>(x)).FirstAsync();
         }
 
         public async Task<TeamDto> CreateTeam(NewTeamDto team)

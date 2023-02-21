@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CollectionsAndLinq.BL.Interfaces;
+using CollectionsAndLinq.BL.Models.Projects;
 using CollectionsAndLinq.BL.Models.Tasks;
 using CollectionsAndLinq.BL.Services.Abstract;
 using CollectionsAndLinq.DAL.Context;
@@ -15,6 +16,11 @@ namespace CollectionsAndLinq.BL.Services
         public async Task<List<TaskDto>> GetTasksAsync()
         {
             return await _context.Tasks.Select(x => _mapper.Map<TaskDto>(x)).ToListAsync();
+        }
+
+        public async Task<TaskDto> GetTaskAsync(int id)
+        {
+            return await _context.Tasks.Where(x => x.Id == id).Select(x => _mapper.Map<TaskDto>(x)).FirstAsync();
         }
 
         public async Task<TaskDto> CreateTask(NewTaskDto task)

@@ -33,13 +33,13 @@ namespace CollectionsAndLinq.WebApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ProjectDto> AddProject([FromBody] Project project)
+        public ActionResult<ProjectDto> AddProject([FromBody] NewProjectDto project)
         {
             return View();
         }
 
         [HttpPut]
-        public ActionResult<Project> EditProject([FromBody] Project project)
+        public ActionResult<Project> EditProject([FromBody] NewProjectDto project)
         {
             return View();
         }
@@ -63,9 +63,9 @@ namespace CollectionsAndLinq.WebApi.Controllers
         }
 
         [HttpGet("sortedFiltered")]
-        public ActionResult<PagedList<FullProjectDto>> GetSortedFilteredPageOfProjects(/*PageModel pageModel = null, FilterModel filterModel = null, SortingModel sortingModel = null*/)
+        public ActionResult<PagedList<FullProjectDto>> GetSortedFilteredPageOfProjects
+            (PageModel pageModel, FilterModel filterModel, SortingModel sortingModel)
         {
-            return _service.GetSortedFilteredPageOfProjectsAsync(null, null, null).Result;
         }
     }
 }

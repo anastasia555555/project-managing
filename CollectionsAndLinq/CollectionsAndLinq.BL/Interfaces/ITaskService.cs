@@ -6,6 +6,7 @@ namespace CollectionsAndLinq.BL.Interfaces
     public interface ITaskService
     {
         Task<List<TaskDto>> GetTasksAsync();
+        Task<TaskDto> GetTaskAsync(int id); 
         Task<TaskDto> CreateTask(NewTaskDto task);
         Task<TaskDto> UpdateTask(NewTaskDto task);
         Task<TaskDto> DeleteTask(int id);

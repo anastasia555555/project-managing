@@ -6,6 +6,7 @@ namespace CollectionsAndLinq.BL.Interfaces
     public interface IUserService
     {
         Task<List<UserDto>> GetUsersAsync();
+        Task<UserDto> GetUserAsync(int id);
         Task<UserDto> CreateUser(NewUserDto user);
         Task<UserDto> UpdateUser(NewUserDto user);
         Task<UserDto> DeleteUser(int id);
