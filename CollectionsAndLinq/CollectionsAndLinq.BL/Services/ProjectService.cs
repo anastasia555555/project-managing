@@ -1,4 +1,4 @@
-﻿ using AutoMapper;
+﻿using AutoMapper;
 using CollectionsAndLinq.BL.Interfaces;
 using CollectionsAndLinq.BL.Models;
 using CollectionsAndLinq.BL.Models.Projects;
@@ -7,11 +7,6 @@ using CollectionsAndLinq.DAL.Context;
 using CollectionsAndLinq.DAL.Entities.Project;
 using CollectionsAndLinq.DAL.Entities.Task;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CollectionsAndLinq.BL.Services
 {
@@ -92,7 +87,7 @@ namespace CollectionsAndLinq.BL.Services
             var tasks = await _context.Tasks.ToListAsync();
             var users = await _context.Users.ToListAsync();
 
-            var result = projects
+            var projectsInfo = projects
                 .GroupJoin(tasks,
                 project => project.Id,
                 task => task.ProjectId,
@@ -112,7 +107,7 @@ namespace CollectionsAndLinq.BL.Services
                     usersInTeam.Count() : null))
                 .ToList();
 
-            return _mapper.Map<List<ProjectInfoDto>>(result);
+            return _mapper.Map<List<ProjectInfoDto>>(projectsInfo);
         }
 
         public async Task<PagedList<FullProjectDto>> GetSortedFilteredPageOfProjectsAsync
@@ -193,7 +188,7 @@ namespace CollectionsAndLinq.BL.Services
                 skipPages = pageModel.PageSize * (pageModel.PageNumber - 1);
             }
 
-            var result = projects
+            var sortedFilteredPagedProjects = projects
                 .GroupJoin(tasks
                 .Join(users,
                 task => task.PerformerId,
@@ -235,7 +230,7 @@ namespace CollectionsAndLinq.BL.Services
                 .Take(pageModel.PageSize)
                 .ToList();
 
-            return new PagedList<FullProjectDto>(_mapper.Map<List<FullProjectDto>>(result), result.Count);
+            return new PagedList<FullProjectDto>(_mapper.Map<List<FullProjectDto>>(sortedFilteredPagedProjects), sortedFilteredPagedProjects.Count);
         }
     }
 }
