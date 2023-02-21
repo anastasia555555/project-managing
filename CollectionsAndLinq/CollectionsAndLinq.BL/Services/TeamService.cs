@@ -1,18 +1,10 @@
 ﻿using AutoMapper;
 using CollectionsAndLinq.BL.Interfaces;
-using CollectionsAndLinq.BL.Models.Projects;
-using CollectionsAndLinq.BL.Models.Tasks;
 using CollectionsAndLinq.BL.Models.Teams;
 using CollectionsAndLinq.BL.Services.Abstract;
 using CollectionsAndLinq.DAL.Context;
-using CollectionsAndLinq.DAL.Entities.Project;
 using CollectionsAndLinq.DAL.Entities.Team;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CollectionsAndLinq.BL.Services
 {
@@ -22,7 +14,7 @@ namespace CollectionsAndLinq.BL.Services
 
         public async Task<List<TeamDto>> GetTeamsAsync()
         {
-            return _mapper.Map<List<TeamDto>>(await _context.Teams.ToListAsync());
+            return await _context.Teams.Select(x => _mapper.Map<TeamDto>(x)).ToListAsync();
         }
 
         public async Task<TeamDto> CreateTeam(NewTeamDto team)

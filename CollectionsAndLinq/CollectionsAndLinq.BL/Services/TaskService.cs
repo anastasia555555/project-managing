@@ -1,16 +1,9 @@
 ﻿using AutoMapper;
 using CollectionsAndLinq.BL.Interfaces;
-using CollectionsAndLinq.BL.Models.Projects;
 using CollectionsAndLinq.BL.Models.Tasks;
 using CollectionsAndLinq.BL.Services.Abstract;
 using CollectionsAndLinq.DAL.Context;
-using CollectionsAndLinq.DAL.Entities.Project;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Task = CollectionsAndLinq.DAL.Entities.Task.Task;
 
 namespace CollectionsAndLinq.BL.Services

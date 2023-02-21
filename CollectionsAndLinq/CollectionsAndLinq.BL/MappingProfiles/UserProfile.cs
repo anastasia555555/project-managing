@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CollectionsAndLinq.BL.Models.Users;
-using CollectionsAndLinq.BL.Entities;
-using CollectionsAndLinq.BL.Models.Tasks;
-using CollectionsAndLinq.BL.Models.Projects;
+using CollectionsAndLinq.DAL.Entities.User;
 
 
 namespace CollectionsAndLinq.BL.MappingProfiles
@@ -21,6 +14,8 @@ namespace CollectionsAndLinq.BL.MappingProfiles
             CreateMap<UserWithTasks, UserWithTasksDto>();
 
             CreateMap<UserInfo, UserInfoDto>();
+
+            CreateMap<NewUserDto, User>();
         }
     }
 }
