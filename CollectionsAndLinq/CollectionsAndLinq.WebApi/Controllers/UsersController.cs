@@ -1,8 +1,6 @@
-﻿using CollectionsAndLinq.BL.Entities;
-using CollectionsAndLinq.BL.Interfaces;
+﻿using CollectionsAndLinq.BL.Interfaces;
 using CollectionsAndLinq.BL.Models.Teams;
 using CollectionsAndLinq.BL.Models.Users;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollectionsAndLinq.WebApi.Controllers
@@ -11,53 +9,50 @@ namespace CollectionsAndLinq.WebApi.Controllers
     [ApiController]
     public class UsersController : Controller
     {
-        private readonly IDataProcessingService _service;
+        private readonly IUserService _service;
 
-        public UsersController(IDataProcessingService service)
-        {
-            _service = service;
-        }
+        public UsersController(IUserService service) => _service = service;
 
         [HttpGet]
-        public ActionResult<List<UserDto>> GetUsers()
+        public async Task<List<UserDto>> GetUsers()
         {
-            return _service.GetUsersAsync().Result;
+            return await _service.GetUsersAsync();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<TeamDto> GetUser(int id)
+        public async Task<UserDto> GetUser(int id)
         {
-            return View();
+            return await _service.GetUserAsync(id);
         }
 
         [HttpPost]
-        public ActionResult<User> AddUser([FromBody] User team)
+        public async Task<UserDto> AddUser([FromBody] NewUserDto user)
         {
-            return View();
+            return await _service.CreateUser(user);
         }
 
         [HttpPut]
-        public ActionResult<User> EditUser([FromBody] User team)
+        public async Task<UserDto> EditUser([FromBody] NewUserDto user)
         {
-            return View();
+            return await _service.UpdateUser(user);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<UserDto> DeleteUser(int id)
+        public async Task<UserDto> DeleteUser(int id)
         {
-            return View();
+            return await _service.DeleteUser(id);
         }
 
         [HttpGet("/sorted")]
-        public ActionResult<List<UserWithTasksDto>> GetSortedUsersWithSortedTasks()
+        public async Task<List<UserWithTasksDto>> GetSortedUsersWithSortedTasks()
         {
-            return _service.GetSortedUsersWithSortedTasksAsync().Result;
+            return await _service.GetSortedUsersWithSortedTasksAsync();
         }
 
         [HttpGet("/info/{userId}")]
-        public ActionResult<UserInfoDto> GetUserInfo(int userId)
+        public async Task<UserInfoDto> GetUserInfo(int userId)
         {
-            return _service.GetUserInfoAsync(userId).Result;
+            return await _service.GetUserInfoAsync(userId);
         }
     }
 }
