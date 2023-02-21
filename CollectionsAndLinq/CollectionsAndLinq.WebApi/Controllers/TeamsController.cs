@@ -9,49 +9,46 @@ namespace CollectionsAndLinq.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TeamsController : Controller
+    public class TeamsController : ControllerBase
     {
-        private readonly IDataProcessingService _service;
+        private readonly ITeamService _service;
 
-        public TeamsController(IDataProcessingService service)
-        {
-            _service = service;
-        }
+        public TeamsController(ITeamService service) => _service = service;
 
         [HttpGet]
-        public ActionResult<List<TeamDto>> GetTeams()
+        public async Task<List<TeamDto>> GetTeams()
         {
-            return _service.GetTeamsAsync().Result;
+            return await _service.GetTeamsAsync();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<TeamDto> GetTeam(int id)
+        public async Task<TeamDto> GetTeam(int id)
         {
-            return View();
+            return await _service.GetTeamAsync(id);
         }
 
         [HttpPost]
-        public ActionResult<Team> AddTeam([FromBody] Team team)
+        public async Task<TeamDto> AddTeam([FromBody] NewTeamDto team)
         {
-            return View();
+            return await _service.CreateTeam(team);
         }
 
         [HttpPut]
-        public ActionResult<Team> EditTeam([FromBody] Team team)
+        public async Task<TeamDto> EditTeam([FromBody] NewTeamDto team)
         {
-            return View();
+            return await _service.UpdateTeam(team);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<TeamDto> DeleteTeam(int id)
+        public async Task<TeamDto> DeleteTeam(int id)
         {
-            return View();
+            return await _service.DeleteTeam(id);
         }
 
         [HttpGet("/sortedByYaer/{year}")]
-        public ActionResult<List<TeamWithMembersDto>> GetSortedTeamByMembersWithYear(int year)
+        public async Task<List<TeamWithMembersDto>> GetSortedTeamByMembersWithYear(int year)
         {
-            return _service.GetSortedTeamByMembersWithYearAsync(year).Result;
+            return await _service.GetSortedTeamByMembersWithYearAsync(year);
         }
     }
 }

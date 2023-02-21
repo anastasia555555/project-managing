@@ -1,7 +1,5 @@
-﻿using CollectionsAndLinq.BL.Entities;
-using CollectionsAndLinq.BL.Interfaces;
+﻿using CollectionsAndLinq.BL.Interfaces;
 using CollectionsAndLinq.BL.Models.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollectionsAndLinq.WebApi.Controllers
