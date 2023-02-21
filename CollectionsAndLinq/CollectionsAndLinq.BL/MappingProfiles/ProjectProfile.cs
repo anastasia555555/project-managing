@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CollectionsAndLinq.BL.Models.Projects;
-using CollectionsAndLinq.BL.Entities;
+using CollectionsAndLinq.DAL.Entities.Project;
 
 namespace CollectionsAndLinq.BL.MappingProfiles
 {

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CollectionsAndLinq.BL.Models.Teams;
-using CollectionsAndLinq.BL.Models.Users;
-using CollectionsAndLinq.BL.Entities;
+using CollectionsAndLinq.DAL.Entities.Team;
 
 namespace CollectionsAndLinq.BL.MappingProfiles
 {
@@ -16,6 +10,7 @@ namespace CollectionsAndLinq.BL.MappingProfiles
         {
             CreateMap<Team, TeamDto>();
             CreateMap<TeamWithMembers, TeamWithMembersDto>();
+            CreateMap<NewTeamDto, Team>();
         }
     }
 }
