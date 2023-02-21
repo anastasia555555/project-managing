@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using CollectionsAndLinq.BL.Interfaces;
-using CollectionsAndLinq.BL.Entities;
-using CollectionsAndLinq.BL.Models.Projects;
-using CollectionsAndLinq.BL.Services;
-using CollectionsAndLinq.BL.MappingProfiles;
+﻿using CollectionsAndLinq.BL.Interfaces;
 using CollectionsAndLinq.BL.Models;
+using CollectionsAndLinq.BL.Models.Projects;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CollectionsAndLinq.WebApi.Controllers
 {
@@ -13,59 +9,57 @@ namespace CollectionsAndLinq.WebApi.Controllers
     [ApiController]
     public class ProjectsController : Controller
     {
-        private readonly IDataProcessingService _service;
+        private readonly IProjectService _service;
 
-        public ProjectsController(IDataProcessingService service)
-        {
-            _service = service;
-        }
+        public ProjectsController(IProjectService service) => _service = service;
 
         [HttpGet]
-        public ActionResult<List<ProjectDto>> GetProjects()
+        public async Task<List<ProjectDto>> GetProjects()
         {
-            return _service.GetProjectsAsync().Result;
+            return await _service.GetProjectsAsync();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ProjectDto> GetProject(int id)
+        public async Task<ProjectDto> GetProject(int id)
         {
-            return View();
+            return await _service.GetProjectAsync(id);
         }
 
         [HttpPost]
-        public ActionResult<ProjectDto> AddProject([FromBody] NewProjectDto project)
+        public async Task<ProjectDto> AddProject([FromBody] NewProjectDto project)
         {
-            return View();
+            return await _service.CreateProject(project);
         }
 
         [HttpPut]
-        public ActionResult<Project> EditProject([FromBody] NewProjectDto project)
+        public async Task<ProjectDto> EditProject([FromBody] NewProjectDto project)
         {
-            return View();
+            return await _service.UpdateProject(project);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<ProjectDto> DeleteProject(int id)
+        public async Task<ProjectDto> DeleteProject(int id)
         {
-            return View();
+            return await _service.DeleteProject(id);
         }
 
         [HttpGet("byTeamSize/{teamSize}")]
-        public ActionResult<List<(int Id, string Name)>> GetProjectsByTeamSize(int teamSize)
+        public async Task<List<(int Id, string Name)>> GetProjectsByTeamSize(int teamSize)
         {
-            return _service.GetProjectsByTeamSizeAsync(teamSize).Result;
+            return await _service.GetProjectsByTeamSizeAsync(teamSize);
         }
 
         [HttpGet("info")]
-        public ActionResult<List<ProjectInfoDto>> GetProjectsInfoAsync()
+        public async Task<List<ProjectInfoDto>> GetProjectsInfoAsync()
         {
-            return _service.GetProjectsInfoAsync().Result;
+            return await _service.GetProjectsInfoAsync();
         }
 
         [HttpGet("sortedFiltered")]
-        public ActionResult<PagedList<FullProjectDto>> GetSortedFilteredPageOfProjects
+        public async Task<PagedList<FullProjectDto>> GetSortedFilteredPageOfProjects
             (PageModel pageModel, FilterModel filterModel, SortingModel sortingModel)
         {
+            return await _service.GetSortedFilteredPageOfProjectsAsync(pageModel, filterModel, sortingModel);
         }
     }
 }
