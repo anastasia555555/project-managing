@@ -8,7 +8,15 @@ namespace CollectionsAndLinq.WebApi.Extentions
 {
     public static class ServiceExtentions
     {
-        public static void RegisterAutoMapper(this IServiceCollection services)
+        public static void AddCustomServices(this IServiceCollection services)
+        {
+            services.AddTransient<ProjectService>();
+            services.AddTransient<TaskService>();
+            services.AddTransient<TeamService>();
+            services.AddTransient<UserService>();
+        }
+
+        public static void AddAutoMapper(this IServiceCollection services)
         {
 
             services.AddAutoMapper(cfg =>
