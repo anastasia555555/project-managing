@@ -55,11 +55,12 @@ namespace CollectionsAndLinq.WebApi.Controllers
             return await _service.GetProjectsInfoAsync();
         }
 
-        [HttpGet("sortedFiltered")]
+        [HttpGet("SortedFiltered")]
         public async Task<PagedList<FullProjectDto>> GetSortedFilteredPageOfProjects
-            (PageModel pageModel, FilterModel filterModel, SortingModel sortingModel)
+            ([FromBody] PageParams pageParams)
         {
-            return await _service.GetSortedFilteredPageOfProjectsAsync(pageModel, filterModel, sortingModel);
+            return await _service.GetSortedFilteredPageOfProjectsAsync
+                (pageParams.pageModel, pageParams.filterModel, pageParams.sortingModel);
         }
     }
 }

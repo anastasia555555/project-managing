@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CollectionsAndLinq.BL\CollectionsAndLinq.BL.csproj" />
-    <ProjectReference Include="..\CollectionsAndLinq.DAL\CollectionsAndLinq.DAL.csproj" />
   </ItemGroup>
 
 </Project>

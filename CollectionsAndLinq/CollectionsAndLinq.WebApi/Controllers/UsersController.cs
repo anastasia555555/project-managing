@@ -1,5 +1,4 @@
 ﻿using CollectionsAndLinq.BL.Interfaces;
-using CollectionsAndLinq.BL.Models.Teams;
 using CollectionsAndLinq.BL.Models.Users;
 using Microsoft.AspNetCore.Mvc;
 

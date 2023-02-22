@@ -20,11 +20,5 @@ namespace CollectionsAndLinq.WebApi.Extentions
             },
             Assembly.GetExecutingAssembly());
         }
-
-
-        public static void RegisterCustomServices(this IServiceCollection services)
-        {
-            services.AddScoped<IDataProcessingService, DataProcessingService>();
-        }
     }
 }

@@ -11,7 +11,7 @@ namespace CollectionsAndLinq.BL.Services
 {
     public class TeamService : BaseService, ITeamService
     {
-        public TeamService(ThreadContext context, IMapper mapper) : base(context, mapper) { }
+        public TeamService(CollectionsAndLinqContext context, IMapper mapper) : base(context, mapper) { }
 
         public async Task<List<TeamDto>> GetTeamsAsync()
         {

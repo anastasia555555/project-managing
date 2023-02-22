@@ -42,13 +42,13 @@ namespace CollectionsAndLinq.WebApi.Controllers
             return await _service.DeleteTask(id);
         }
 
-        [HttpGet("/countInProjectsByUser/{userId}")]
+        [HttpGet("countInProjectsByUser/{userId}")]
         public async Task<Dictionary<string, int>> GetTasksCountInProjectsByUserId(int userId)
         {
             return await _service.GetTasksCountInProjectsByUserIdAsync(userId);
         }
 
-        [HttpGet("/byUser/{userId}")]
+        [HttpGet("byUser/{userId}")]
         public async Task<List<TaskDto>> GetCapitalTasksByUserId(int userId)
         {
             return await _service.GetCapitalTasksByUserIdAsync(userId);

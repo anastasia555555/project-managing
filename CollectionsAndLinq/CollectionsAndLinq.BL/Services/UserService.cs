@@ -12,7 +12,7 @@ namespace CollectionsAndLinq.BL.Services
 {
     public class UserService : BaseService, IUserService
     {
-        public UserService(ThreadContext context, IMapper mapper) : base(context, mapper) { }
+        public UserService(CollectionsAndLinqContext context, IMapper mapper) : base(context, mapper) { }
 
         public async Task<List<UserDto>> GetUsersAsync()
         {

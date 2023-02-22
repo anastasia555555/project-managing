@@ -12,7 +12,7 @@ namespace CollectionsAndLinq.BL.Services
 {
     public class ProjectService : BaseService, IProjectService
     {
-        public ProjectService(ThreadContext context, IMapper mapper) : base(context, mapper) { }
+        public ProjectService(CollectionsAndLinqContext context, IMapper mapper) : base(context, mapper) { }
 
         public async Task<List<ProjectDto>> GetProjectsAsync()
         {

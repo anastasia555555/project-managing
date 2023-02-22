@@ -11,7 +11,7 @@ namespace CollectionsAndLinq.BL.Services
 {
     public class TaskService : BaseService, ITaskService
     {
-        public TaskService(ThreadContext context, IMapper mapper) : base(context, mapper) { }
+        public TaskService(CollectionsAndLinqContext context, IMapper mapper) : base(context, mapper) { }
 
         public async Task<List<TaskDto>> GetTasksAsync()
         {
