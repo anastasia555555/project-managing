@@ -1,4 +1,4 @@
-﻿namespace CollectionsAndLinq.DAL.Entities
+﻿namespace CollectionsAndLinq.DAL.Entities.Enums
 {
     public enum TaskState
     {

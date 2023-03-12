@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CollectionsAndLinq.BL.Models.Projects;
+using CollectionsAndLinq.DAL.Entities;
 using CollectionsAndLinq.DAL.Entities.Project;
 
 namespace CollectionsAndLinq.BL.MappingProfiles

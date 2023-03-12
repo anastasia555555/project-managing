@@ -4,7 +4,7 @@ using CollectionsAndLinq.BL.Models.Projects;
 using CollectionsAndLinq.BL.Models.Users;
 using CollectionsAndLinq.BL.Services.Abstract;
 using CollectionsAndLinq.DAL.Context;
-using CollectionsAndLinq.DAL.Entities;
+using CollectionsAndLinq.DAL.Entities.Enums;
 using CollectionsAndLinq.DAL.Entities.User;
 using Microsoft.EntityFrameworkCore;
 

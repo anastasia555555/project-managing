@@ -46,6 +46,17 @@ namespace CollectionsAndLinq.WebApi
 
             app.UseEndpoints(endpoint =>
                 endpoint.MapControllers());
+
+            InitializeDatabase(app);
+        }
+
+        private static void InitializeDatabase(IApplicationBuilder app)
+        {
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                using var context = scope.ServiceProvider.GetRequiredService<CollectionsAndLinqContext>();
+                context.Database.Migrate();
+            };
         }
     }
 }

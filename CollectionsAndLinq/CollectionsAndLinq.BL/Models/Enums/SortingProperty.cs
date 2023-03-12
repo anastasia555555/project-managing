@@ -1,4 +1,4 @@
-﻿namespace CollectionsAndLinq.BL.Models.Projects;
+﻿namespace CollectionsAndLinq.BL.Models.Enums;
 
 public enum SortingProperty
 {

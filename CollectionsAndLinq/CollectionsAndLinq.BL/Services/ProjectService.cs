@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using CollectionsAndLinq.BL.Interfaces;
 using CollectionsAndLinq.BL.Models;
+using CollectionsAndLinq.BL.Models.Enums;
 using CollectionsAndLinq.BL.Models.Projects;
 using CollectionsAndLinq.BL.Services.Abstract;
 using CollectionsAndLinq.DAL.Context;
+using CollectionsAndLinq.DAL.Entities;
 using CollectionsAndLinq.DAL.Entities.Project;
 using CollectionsAndLinq.DAL.Entities.Task;
 using Microsoft.EntityFrameworkCore;

@@ -10,10 +10,10 @@ namespace CollectionsAndLinq.WebApi.Extentions
     {
         public static void AddCustomServices(this IServiceCollection services)
         {
-            services.AddTransient<ProjectService>();
-            services.AddTransient<TaskService>();
-            services.AddTransient<TeamService>();
-            services.AddTransient<UserService>();
+            services.AddTransient<IProjectService, ProjectService>();
+            services.AddTransient<ITaskService, TaskService>();
+            services.AddTransient<ITeamService, TeamService>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         public static void AddAutoMapper(this IServiceCollection services)

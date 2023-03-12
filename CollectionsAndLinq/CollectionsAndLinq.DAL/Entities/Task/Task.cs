@@ -1,4 +1,6 @@
-﻿namespace CollectionsAndLinq.DAL.Entities.Task
+﻿using CollectionsAndLinq.DAL.Entities.Enums;
+
+namespace CollectionsAndLinq.DAL.Entities.Task
 {
     public record Task(
     int Id,
