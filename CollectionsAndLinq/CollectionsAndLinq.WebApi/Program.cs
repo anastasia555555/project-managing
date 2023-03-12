@@ -14,6 +14,5 @@ namespace CollectionsAndLinq.WebApi
                 .Build()
                 .Run();
         }
-
     }
 }
